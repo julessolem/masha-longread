@@ -1,5 +1,5 @@
 {
-  "netflixDeal": { "seasons": [8, 9], "countries": "100+", "period": "июнь 2026", "sourceId": 6, "seasonsSourceId": 7, "note": "добавлено при вёрстке по тексту 01-zavyazka.md (сезоны — [^7], страны — [^6])" },
+  "netflixDeal": { "seasons": [8, 9], "countries": "100+ стран", "period": "июнь 2026", "sourceId": 6, "seasonsSourceId": 7, "note": "добавлено при вёрстке по тексту 01-zavyazka.md (сезоны — [^7], страны — [^6])" },
   "boxOfficeAbroadYears": [
     { "period": "2019", "value": 52.2, "unit": "млн $", "sourceId": 2, "note": "российское кино целиком, без СНГ" },
     { "period": "2022", "value": 17.0, "unit": "млн $", "sourceId": 1 },

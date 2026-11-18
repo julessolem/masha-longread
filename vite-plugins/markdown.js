@@ -13,10 +13,10 @@ export function fmtDate(d) {
 }
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
-const SHORT = /(^|[\s(«])(в|во|и|а|с|со|к|ко|о|об|у|на|не|ни|по|за|из|от|до|для|без|при|про|что|как|но|же|ли|—)\s+/gi;
+const SHORT = /(^|[\s(«])(в|во|и|а|с|со|к|ко|о|об|у|на|не|ни|по|за|из|от|до|для|без|при|про|что|как|но|же|ли|—|–)\s+/gi;
 const UNIT = /(\d)\s+(млн|млрд|тыс|%|руб|года?|году|часов|стран|языков|экранах|территорий)/g;
 export const nbsp = (t) => t.replace(SHORT, (m, a, w) => `${a}${w} `).replace(SHORT, (m, a, w) => `${a}${w} `)
-  .replace(UNIT, '$1 $2').replace(/ —/g, ' —');
+  .replace(UNIT, '$1 $2').replace(/ ([—–])/g, ' $1'); // тире не переносится в начало строки
 
 export function createRenderer(sources, { dev = false } = {}) {
   const byId = new Map(sources.map((s) => [String(s.id), s]));
