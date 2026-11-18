@@ -55,9 +55,11 @@ export default function content() {
     // Статичная обложка в index.html (быстрая первая отрисовка)
     transformIndexHtml(html) {
       const { HTML } = build(dev);
+      const UI = JSON.parse(readFileSync(join(DIR, 'ui.json'), 'utf8'));
       const cover = HTML['00-oblozhka.md'] || '';
+      const hint = String(UI.cover?.hint ?? '').replace(/[&<>"]/g, '');
       return html.replace('<section class="stop stop--cover" id="s0" data-stop="0" aria-labelledby="s0-h"></section>',
-        `<section class="stop stop--cover" id="s0" data-stop="0" aria-labelledby="s0-h"><div class="cover"><div class="cover__text">${cover.replace('<h1', '<h1 id="s0-h"')}<a class="scroll-hint" href="#s1"><i aria-hidden="true"></i>листайте</a></div><div class="cover__ticket">${ticketHTML()}</div></div></section>`);
+        `<section class="stop stop--cover" id="s0" data-stop="0" aria-labelledby="s0-h"><div class="cover"><div class="cover__text">${cover.replace('<h1', '<h1 id="s0-h"')}<a class="scroll-hint" href="#s1"><i aria-hidden="true"></i><span data-ui="cover.hint">${hint}</span></a></div><div class="cover__ticket">${ticketHTML(UI.ticket)}</div></div></section>`);
     },
     // Правка .md / sources.json в dev → полная перезагрузка страницы
     handleHotUpdate({ file, server }) {

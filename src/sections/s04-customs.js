@@ -3,6 +3,7 @@
 import { renderMarkdown } from '../content/render.js';
 import { nodesFrom, prose, h } from '../ui/util.js';
 import { gsap, REDUCED, isMobile, dur } from '../ui/motion.js';
+import { t, u } from '../content/ui.js';
 
 
 export function render(el) {
@@ -22,10 +23,10 @@ export function render(el) {
   const passport = h(`
   <div class="passport">
     <div class="passport__spread">
-      <div class="passport__page"><span class="passport__label" aria-hidden="true">Visas · Визы</span></div>
-      <div class="passport__page"><span class="passport__label" aria-hidden="true">Стр. 17</span></div>
+      <div class="passport__page"><span class="passport__label" aria-hidden="true">${u('customs.leftPage')}</span></div>
+      <div class="passport__page"><span class="passport__label" aria-hidden="true">${u('customs.rightPage')}</span></div>
     </div>
-    <p class="passport__hint">Нажмите на штамп, чтобы прочитать</p>
+    <p class="passport__hint">${u('customs.hint')}</p>
   </div>`);
   const pages = passport.querySelectorAll('.passport__page');
   const cards = document.createElement('div');
@@ -34,7 +35,7 @@ export function render(el) {
   stamps.forEach(({ word, p, i }) => {
     const id = `customs-${i}`;
     const btn = h(`<button type="button" class="stamp stamp--${(i % 4) + 1}" aria-expanded="false" aria-controls="${id}">
-      <span class="stamp__meta">Пункт досмотра ${i + 1}</span><span class="stamp__word">${word}</span><span class="stamp__meta">МШ · 2026</span></button>`);
+      <span class="stamp__meta" data-ui="customs.stampTop">${t('customs.stampTop', { n: i + 1 })}</span><span class="stamp__word">${word}</span>${u('customs.stampBottom', {}, 'span', 'stamp__meta')}</button>`);
     pages[i < Math.ceil(stamps.length / 2) ? 0 : 1].append(btn);
     const card = document.createElement('div');
     card.className = 'customs-card';

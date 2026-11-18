@@ -3,6 +3,7 @@ import { renderMarkdown } from '../content/render.js';
 import { nodesFrom, prose } from '../ui/util.js';
 import { makeTicket, tilt } from '../ui/ticket.js';
 import { gsap, REDUCED } from '../ui/motion.js';
+import { t } from '../content/ui.js';
 
 export function render(el) {
   const nodes = nodesFrom(renderMarkdown('08-vyvod.md'));
@@ -10,12 +11,13 @@ export function render(el) {
   const rest = nodes.filter((n) => n.tagName !== 'H2');
   const wrap = document.createElement('div');
   wrap.className = 'arrival-ticket';
-  const ticket = makeTicket({ light: true, stamp: 'Прибыла' });
+  const ticket = makeTicket({ light: true, stamp: t('arrival.stamp') });
   const stamp = document.createElement('button');
   stamp.type = 'button';
   stamp.className = 'ticket__stamp';
-  stamp.textContent = 'ПРИБЫЛА';
-  stamp.setAttribute('aria-label', 'Штамп «Прибыла» — поставить ещё раз');
+  stamp.textContent = t('arrival.stamp');
+  stamp.dataset.ui = 'arrival.stamp';
+  stamp.setAttribute('aria-label', t('arrival.stampAria'));
   ticket.append(stamp);
   wrap.append(ticket);
   const inner = document.createElement('div');

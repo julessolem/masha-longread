@@ -1,9 +1,10 @@
 // Посадочный талон «Москва → Мир», пассажир «Маша» (обложка и прибытие)
 import { h } from './util.js';
 import { ticketHTML } from './ticket-html.js';
+import { UI } from '../content/ui.js';
 import { gsap, REDUCED, isMobile } from './motion.js';
 
-export const makeTicket = (opts) => h(ticketHTML(opts));
+export const makeTicket = (opts) => h(ticketHTML(UI.ticket, opts));
 
 /** Наклон талона за курсором (на устройствах с мышью) */
 export function tilt(el, strength = 8) {

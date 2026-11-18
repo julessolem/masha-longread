@@ -5,6 +5,7 @@ import { line as d3line } from 'd3-shape';
 import { max } from 'd3-array';
 import { gsap, REDUCED, isMobile } from '../ui/motion.js';
 import { num } from '../ui/util.js';
+import { t as tx } from '../content/ui.js';
 
 const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 
@@ -36,13 +37,13 @@ export function lineChart(el, data) {
       const x0 = x(years[i - 1] + 0.15); const x1 = x(years[i] - 0.15);
       g.append('rect').attr('x', x0).attr('y', m.t).attr('width', x1 - x0).attr('height', H - m.t - m.b).attr('fill', css('--c-paper-2')).attr('opacity', 0.8);
       g.append('text').attr('x', (x0 + x1) / 2).attr('y', H - m.b - 14).attr('text-anchor', 'middle').attr('font-size', small ? 20 : 14).attr('fill', css('--c-ink-soft'))
-        .text(`${years[i - 1] + 1}–${years[i] - 1}: нет данных`);
+        .attr('data-ui', 'who.gap').text(tx('who.gap', { from: years[i - 1] + 1, to: years[i] - 1 }));
     }
   }
 
   const path = svg.append('path').datum(data).attr('fill', 'none').attr('stroke', css('--c-passport')).attr('stroke-width', 4).attr('stroke-linejoin', 'round')
     .attr('d', d3line().x((d) => x(Number(d.period))).y((d) => y(d.value)));
-  const pts = svg.append('g').selectAll('g').data(data).join('g').attr('transform', (d) => `translate(${x(Number(d.period))},${y(d.value)})`);
+  const pts = svg.append('g').selectAll('g').data(data).join('g').attr('transform', (d) => `translate(${x(Number(d.period))},${y(d.value)})`).attr('data-path', (d, i) => `boxOfficeAbroadYears.${i}.value`);
   pts.append('circle').attr('r', 7).attr('fill', css('--c-passport')).attr('stroke', css('--c-paper')).attr('stroke-width', 3);
   pts.append('text').attr('y', -16).attr('text-anchor', (d, i) => (i === 0 ? 'start' : 'middle')).attr('dx', (d, i) => (i === 0 ? -6 : 0))
     .attr('font-size', small ? 24 : 17).attr('font-weight', 800).text((d) => `$${num(d.value)}${narrow ? '' : ' млн'}`);
@@ -67,18 +68,18 @@ export function partialChart(el, data) {
   const W = small ? 420 : 300; const H = small ? 300 : 380;
   const m = { t: 70, r: 10, b: 50, l: 10 };
   const svg = select(el).append('svg').attr('viewBox', `0 0 ${W} ${H}`).attr('aria-hidden', 'true');
-  svg.append('text').attr('x', 4).attr('y', 22).attr('font-size', 19).attr('font-weight', 800).text('Неполные периоды');
-  svg.append('text').attr('x', 4).attr('y', 44).attr('font-size', 14).attr('fill', css('--c-ink-soft')).text('январь–сентябрь, своя шкала');
+  svg.append('text').attr('x', 4).attr('y', 22).attr('font-size', 19).attr('font-weight', 800).attr('data-ui', 'who.partialTitle').text(tx('who.partialTitle'));
+  svg.append('text').attr('x', 4).attr('y', 44).attr('font-size', 14).attr('fill', css('--c-ink-soft')).attr('data-ui', 'who.partialSub').text(tx('who.partialSub'));
   const x = scaleBand().domain(data.map((d) => d.period)).range([m.l, W - m.r]).padding(0.3);
   const y = scaleLinear().domain([0, max(data, (d) => d.value) * 1.25]).range([H - m.b, m.t]);
   const colors = [css('--c-other'), css('--c-stamp')];
-  const bars = svg.selectAll('g.b').data(data).join('g').attr('class', 'b');
+  const bars = svg.selectAll('g.b').data(data).join('g').attr('class', 'b').attr('data-path', (d, i) => `boxOfficeAbroadPartial.${i}.value`);
   bars.append('rect').attr('x', (d) => x(d.period)).attr('width', x.bandwidth()).attr('y', (d) => y(d.value)).attr('height', (d) => y(0) - y(d.value))
     .attr('rx', 4).attr('fill', (d, i) => colors[i % 2]).attr('stroke', css('--c-ink')).attr('stroke-dasharray', '5 4');
   bars.append('text').attr('x', (d) => x(d.period) + x.bandwidth() / 2).attr('y', (d) => y(d.value) - 10).attr('text-anchor', 'middle').attr('font-size', small ? 22 : 18).attr('font-weight', 800).text((d) => `$${num(d.value)} млн`);
   bars.append('text').attr('x', (d) => x(d.period) + x.bandwidth() / 2).attr('y', H - m.b + 24).attr('text-anchor', 'middle').attr('font-size', 15).attr('fill', css('--c-ink-soft')).text((d) => d.period);
   const note = data.find((d) => d.note);
-  if (note) svg.append('text').attr('x', W - 4).attr('y', 22).attr('text-anchor', 'end').attr('font-size', 24).attr('font-weight', 900).attr('fill', css('--c-stamp')).text(note.note);
+  if (note) svg.append('text').attr('x', W - 4).attr('y', 22).attr('text-anchor', 'end').attr('font-size', 24).attr('font-weight', 900).attr('fill', css('--c-stamp')).attr('data-path', `boxOfficeAbroadPartial.${data.indexOf(note)}.note`).text(note.note);
   if (!REDUCED) {
     gsap.from(bars.selectAll('rect').nodes(), { scaleY: 0, transformOrigin: '50% 100%', duration: 0.9, ease: 'power3.out', stagger: 0.15, scrollTrigger: { trigger: el, start: 'top 80%', once: true } });
   }

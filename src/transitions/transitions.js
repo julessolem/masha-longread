@@ -2,6 +2,7 @@
 // анимация привязана к скроллу (scrub) и использует только transform/opacity.
 // На телефоне — короче и проще; при prefers-reduced-motion — статичная декоративная картинка.
 import { gsap, REDUCED, isMobile } from '../ui/motion.js';
+import { UI, t } from '../content/ui.js';
 
 const PLANE = 'M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z';
 const st = (el, extra = {}) => ({ trigger: el, start: 'top bottom', end: 'bottom top', scrub: 0.6, ...extra });
@@ -62,7 +63,7 @@ const BUILD = {
     el.innerHTML = `<div class="transit__stage" style="perspective:1400px"><div class="t-book" style="position:relative;width:min(520px,84vw);aspect-ratio:2/1.3;transform-style:preserve-3d">
       <div style="position:absolute;inset:0;border-radius:10px;background:#F8F0E6;box-shadow:0 20px 40px -26px rgba(0,0,0,.5);background-image:repeating-linear-gradient(0deg,transparent 0 17px,rgba(110,30,42,.07) 17px 18px)"></div>
       <div class="t-page" style="position:absolute;top:0;bottom:0;left:50%;width:50%;transform-origin:0 50%;transform-style:preserve-3d">
-        <div style="position:absolute;inset:0;border-radius:0 10px 10px 0;background:#FBF4EA;backface-visibility:hidden;box-shadow:inset 8px 0 14px -10px rgba(0,0,0,.3);display:grid;place-items:center;font:700 12px/1 var(--font-mono);letter-spacing:.2em;color:#6E1E2A">ВИЗЫ · VISAS</div>
+        <div style="position:absolute;inset:0;border-radius:0 10px 10px 0;background:#FBF4EA;backface-visibility:hidden;box-shadow:inset 8px 0 14px -10px rgba(0,0,0,.3);display:grid;place-items:center;font:700 12px/1 var(--font-mono);letter-spacing:.2em;color:#6E1E2A">${t('transitions.passportPage')}</div>
         <div style="position:absolute;inset:0;border-radius:10px 0 0 10px;background:#F2E4DF;backface-visibility:hidden;transform:rotateY(180deg)"></div>
       </div>
       <div style="position:absolute;left:50%;top:0;bottom:0;width:2px;background:rgba(0,0,0,.12)"></div>
@@ -77,7 +78,7 @@ const BUILD = {
 
   // 04 → 05: штампы разлетаются
   scatter(el) {
-    const words = ['ВИЗА', 'ВЪЕЗД', 'ДОСМОТР', 'ВЫЕЗД', 'ТРАНЗИТ'];
+    const words = UI.transitions?.scatter || [];
     const colors = ['#B8322A', '#2F5D8A', '#6E1E2A', '#1C2333', '#C8641E'];
     el.innerHTML = `<div class="transit__stage">${words.map((w, i) => `<span class="t-st" style="position:absolute;font:900 clamp(14px,2.4vw,22px)/1 var(--font-main);letter-spacing:.06em;color:${colors[i]};border:3px double currentColor;border-radius:10px;padding:6px 12px;mix-blend-mode:multiply">${w}</span>`).join('')}</div>`;
     if (REDUCED) { el.querySelectorAll('.t-st').forEach((s, i) => gsap.set(s, { x: (i - 2) * 110, rotation: (i % 2 ? 8 : -8) })); return; }
@@ -95,7 +96,7 @@ const BUILD = {
     el.innerHTML = `<div class="transit__stage"><svg viewBox="0 0 200 170" width="min(200px, 40vw)" class="t-case">
       <rect x="70" y="4" width="60" height="30" rx="10" fill="none" stroke="#1C2333" stroke-width="9"/>
       <rect x="20" y="28" width="160" height="118" rx="18" fill="#6E1E2A"/><rect x="52" y="26" width="12" height="122" rx="3" fill="#561520"/><rect x="136" y="26" width="12" height="122" rx="3" fill="#561520"/>
-      <text x="100" y="94" text-anchor="middle" font-family="PT Mono, monospace" font-size="13" letter-spacing="2" fill="#E9C77B">МАША</text>
+      <text x="100" y="94" text-anchor="middle" font-family="PT Mono, monospace" font-size="13" letter-spacing="2" fill="#E9C77B">${t('transitions.suitcase')}</text>
       <circle class="t-wheel" cx="48" cy="156" r="10" fill="#1C2333"/><circle class="t-wheel" cx="152" cy="156" r="10" fill="#1C2333"/>
     </svg></div>`;
     if (REDUCED) return;

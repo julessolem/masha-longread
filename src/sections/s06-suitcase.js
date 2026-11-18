@@ -3,6 +3,7 @@
 import { renderMarkdown, DATA } from '../content/render.js';
 import { nodesFrom, prose, h, fnRefs } from '../ui/util.js';
 import { gsap, REDUCED, isMobile } from '../ui/motion.js';
+import { t, u } from '../content/ui.js';
 
 export function render(el) {
   const nodes = nodesFrom(renderMarkdown('06-chemodan.md'));
@@ -13,28 +14,28 @@ export function render(el) {
 
   const fig = h(`
   <figure class="suitcase">
-    <figcaption class="figure__title">Из чего состоит доход анимационного бренда: Animaccord, ${merch.note}</figcaption>
+    <figcaption class="figure__title" data-ui="suitcase.title">${t('suitcase.title', { note: merch.note })}</figcaption>
     <div class="case">
       <div class="case__handle" aria-hidden="true"></div>
       <div class="case__body">
-        <div class="case__lid" aria-hidden="true"><span>Багаж · МАША<br>MOW → МИР</span></div>
+        <div class="case__lid" aria-hidden="true"><span>${u('suitcase.lidTop')}<br>${u('suitcase.lidBottom')}</span></div>
         <div class="treemap" style="--merch: ${m}%">
           <button type="button" class="cell cell--merch" aria-pressed="false" data-k="merch">
-            <span class="cell__val">≈${m}%</span><span class="cell__name">Мерч и лицензии на товары</span>
+            <span class="cell__val" data-path="masha.merchShare.value">≈${m}%</span>${u('suitcase.merch', {}, 'span', 'cell__name')}
           </button>
           <div class="treemap__col">
             <button type="button" class="cell cell--part" aria-pressed="false" data-k="box">
-              <span class="cell__name">Касса</span><span class="cell__note">часть «контента»</span>
+              ${u('suitcase.box', {}, 'span', 'cell__name')}${u('suitcase.partNote', {}, 'span', 'cell__note')}
             </button>
             <button type="button" class="cell cell--part" aria-pressed="false" data-k="rights">
-              <span class="cell__name">Права, ТВ и стриминг</span><span class="cell__note">часть «контента»</span>
+              ${u('suitcase.rights', {}, 'span', 'cell__name')}${u('suitcase.partNote', {}, 'span', 'cell__note')}
             </button>
           </div>
         </div>
       </div>
     </div>
-    <div class="case__info" aria-live="polite"><p>Нажмите на отделение чемодана.</p></div>
-    <p class="figure__note">Оценка Bloomberg, 2015: мерч ≈${m}%, контент ≈${100 - m}%. Как «контент» делится между кассой и продажей прав, не раскрывается — поэтому эти две ячейки показаны условно, поровну.${fnRefs(merch.sourceId)}</p>
+    <div class="case__info" aria-live="polite"><p>${u('suitcase.hint')}</p></div>
+    <p class="figure__note"><span data-ui="suitcase.note">${t('suitcase.note', { merch: m, content: 100 - m })}</span>${fnRefs(merch.sourceId)}</p>
   </figure>`);
 
   const inner = document.createElement('div');
@@ -46,15 +47,12 @@ export function render(el) {
 
 export function animate(el, { fig, m }) {
   const info = fig.querySelector('.case__info');
-  const TEXT = {
-    merch: `Около ${m}% доходов компании — лицензионные товары (оценка Bloomberg, 2015).`,
-    box: `Касса — видимая «верхушка»: вместе с продажей прав она даёт около ${100 - m}% доходов. Точная доля кассы не раскрывается.`,
-    rights: `Продажа прав телеканалам и стримингам — вторая часть «контента» (≈${100 - m}% вместе с кассой). Отдельной цифры нет.`,
-  };
+  const vars = { merch: m, content: 100 - m };
+  const TEXT = { merch: 'suitcase.infoMerch', box: 'suitcase.infoBox', rights: 'suitcase.infoRights' };
   const cells = [...fig.querySelectorAll('.cell')];
   cells.forEach((c) => c.addEventListener('click', () => {
     cells.forEach((x) => x.setAttribute('aria-pressed', String(x === c)));
-    info.innerHTML = `<p>${TEXT[c.dataset.k]}</p>`;
+    info.innerHTML = `<p data-ui="${TEXT[c.dataset.k]}">${t(TEXT[c.dataset.k], vars)}</p>`;
   }));
 
   const lid = fig.querySelector('.case__lid');

@@ -4,6 +4,7 @@ import { nodesFrom } from '../ui/util.js';
 import { makeTicket, tilt } from '../ui/ticket.js';
 import { gsap, REDUCED, isMobile, dur } from '../ui/motion.js';
 import { quantize } from '../ui/varfont.js';
+import { u } from '../content/ui.js';
 
 export function render(el) {
   // Обложка уже встроена в index.html при сборке (vite-plugins/content.js); если нет — собираем здесь
@@ -11,7 +12,7 @@ export function render(el) {
     el.innerHTML = '<div class="cover"><div class="cover__text"></div><div class="cover__ticket"></div></div>';
     const text = el.querySelector('.cover__text');
     nodesFrom(renderMarkdown('00-oblozhka.md')).forEach((n) => text.append(n));
-    text.insertAdjacentHTML('beforeend', '<a class="scroll-hint" href="#s1"><i aria-hidden="true"></i>листайте</a>');
+    text.insertAdjacentHTML('beforeend', `<a class="scroll-hint" href="#s1"><i aria-hidden="true"></i>${u('cover.hint')}</a>`);
   }
   const h1 = el.querySelector('h1');
   if (h1) {

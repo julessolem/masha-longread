@@ -3,6 +3,7 @@
 import { renderMarkdown, DATA } from '../content/render.js';
 import { nodesFrom, prose, h, fnRefs, num } from '../ui/util.js';
 import { whenNear, refreshSoon, gsap, REDUCED } from '../ui/motion.js';
+import { t, u } from '../content/ui.js';
 
 export const scenarioList = () => Object.entries(DATA.scenarios).filter(([, v]) => v && typeof v === 'object' && v.label).map(([key, v]) => ({ key, ...v }));
 
@@ -26,13 +27,13 @@ export function render(el) {
   const target = DATA.animationTarget2030;
   const fig = h(`
   <figure class="scen">
-    <figcaption class="figure__title">Экспортные сборы российской анимации, млн долларов: 2023 — факт, 2030 — сценарии</figcaption>
-    <div class="scen__btns" role="group" aria-label="Сценарий">
-      ${list.map((s, i) => `<button type="button" class="btn scen__btn" aria-pressed="${i === 0}" aria-controls="scen-panel" data-k="${s.key}">${s.label}</button>`).join('')}
+    <figcaption class="figure__title">${u('scenarios.title')}</figcaption>
+    <div class="scen__btns" role="group" aria-label="${t('scenarios.groupAria')}">
+      ${list.map((s, i) => `<button type="button" class="btn scen__btn" aria-pressed="${i === 0}" aria-controls="scen-panel" data-k="${s.key}" data-path="scenarios.${s.key}.label">${s.label}</button>`).join('')}
     </div>
     <div class="chart chart--scen" data-chart="scen" role="img" aria-label=""></div>
     <div id="scen-panel" aria-live="polite"></div>
-    <p class="figure__note">${DATA.scenarios.note}. Факт 2023 и цель 2030 — отраслевой доклад${fnRefs([start.sourceId, target.sourceId])}</p>
+    <p class="figure__note"><span data-path="scenarios.note">${DATA.scenarios.note}</span>. ${u('scenarios.noteSuffix')}${fnRefs([start.sourceId, target.sourceId])}</p>
   </figure>`);
   const panelHost = fig.querySelector('#scen-panel');
   const panels = blocks.map((b, i) => {

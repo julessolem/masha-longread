@@ -3,14 +3,10 @@ import { renderMarkdown, findSentence, DATA, getSource, fmtDate, escapeHtml } fr
 import MEDIA from '../../content/media.json';
 import { nodesFrom, prose, h, fnRefs } from '../ui/util.js';
 import { gsap, REDUCED, onEnter } from '../ui/motion.js';
+import { t, u, UI } from '../content/ui.js';
 
-// Подписи к цифрам из data.json → masha (интерфейсный текст)
-const LABELS = {
-  countries: 'стран, где транслируют сериал',
-  languages: 'языков дубляжа',
-  youtubeSubsRu: 'подписчиков YouTube-канала с русской озвучкой',
-  youtubeSubsEn: 'подписчиков англоязычного канала',
-};
+// Подписи к цифрам из data.json → masha — в ui.json → voices.labels
+const LABELS = UI.voices?.labels || {};
 
 export function render(el) {
   const nodes = nodesFrom(renderMarkdown('05-lokalizatsiya.md'));
@@ -19,23 +15,23 @@ export function render(el) {
   const base = import.meta.env.BASE_URL;
 
   // Выноска: предложение с цитатой Бырдина из текста раздела (дублирует абзац, поэтому скрыта от читалок)
-  const quote = h(`<aside class="typed" aria-hidden="true"><p class="typed__text">${findSentence('05-lokalizatsiya.md', 'Бырдин')}</p></aside>`);
+  const quote = h(`<aside class="typed" aria-hidden="true"><p class="typed__text">${findSentence('05-lokalizatsiya.md', t('voices.quoteKeyword'))}</p></aside>`);
   quote.querySelectorAll('a').forEach((a) => a.setAttribute('tabindex', '-1'));
 
   const dub = h(`
   <figure class="dub">
-    <figcaption class="figure__title">Сравните озвучки: один фрагмент на разных языках</figcaption>
-    <div class="tabs" role="tablist" aria-label="Язык озвучки">
-      ${MEDIA.dub.map((d, i) => `<button type="button" class="btn" role="tab" id="dub-tab-${i}" aria-selected="${i === 0}" aria-controls="dub-panel-${i}" tabindex="${i === 0 ? 0 : -1}" lang="${d.lang.toLowerCase()}">${d.lang}<span class="sr-only"> — ${d.label}</span></button>`).join('')}
+    <figcaption class="figure__title">${u('voices.dubTitle')}</figcaption>
+    <div class="tabs" role="tablist" aria-label="${t('voices.dubTabsAria')}">
+      ${MEDIA.dub.map((d, i) => `<button type="button" class="btn" role="tab" id="dub-tab-${i}" aria-selected="${i === 0}" aria-controls="dub-panel-${i}" tabindex="${i === 0 ? 0 : -1}" lang="${d.lang.toLowerCase()}" data-path="media:dub.${i}.lang">${d.lang}<span class="sr-only"> — ${d.label}</span></button>`).join('')}
     </div>
     ${MEDIA.dub.map((d, i) => `
     <div class="dub__panel" role="tabpanel" id="dub-panel-${i}" aria-labelledby="dub-tab-${i}" ${i ? 'hidden' : ''}>
       <div class="dub__screen">
         ${d.ready
           ? `<video controls preload="none" playsinline ${d.poster ? `poster="${base}${d.poster}"` : ''} aria-label="Фрагмент «Маши и Медведя», озвучка: ${escapeHtml(d.label)}"><source src="${base}${d.file}" type="video/mp4"></video>`
-          : `<div class="dub__empty"><span class="dub__lang" lang="${d.lang.toLowerCase()}">${d.lang}</span><span class="dub__wave" aria-hidden="true">${'<i></i>'.repeat(14)}</span><span>Здесь будет фрагмент с озвучкой «${escapeHtml(d.label)}»</span><code>public/${d.file}</code></div>`}
+          : `<div class="dub__empty"><span class="dub__lang" lang="${d.lang.toLowerCase()}">${d.lang}</span><span class="dub__wave" aria-hidden="true">${'<i></i>'.repeat(14)}</span><span data-ui="voices.dubEmpty">${escapeHtml(t('voices.dubEmpty', { label: d.label }))}</span><code>public/${d.file}</code></div>`}
       </div>
-      <p class="dub__cap">Фрагмент приведён в информационных целях. Источник: ${escapeHtml(d.source || 'TODO')}.</p>
+      <p class="dub__cap"><span data-ui="voices.dubCaption">${escapeHtml(t('voices.dubCaption', { source: d.source || 'TODO' }))}</span> <span class="edit-only" data-path="media:dub.${i}.source">✎ источник</span></p>
     </div>`).join('')}
   </figure>`);
 
@@ -43,8 +39,8 @@ export function render(el) {
     const s = getSource(v.sourceId);
     return `<div role="listitem"><button type="button" class="flip" aria-pressed="false">
       <span class="flip__inner">
-        <span class="flip__face flip__front"><span class="flip__num">${escapeHtml(v.value)}</span><span class="flip__label">${LABELS[k]}</span><span class="flip__more" aria-hidden="true">нажмите, чтобы перевернуть ↻</span></span>
-        <span class="flip__face flip__back">${v.note ? `<b>${escapeHtml(v.note[0].toUpperCase() + v.note.slice(1))}</b>` : ''}<span>Источник: ${s ? `${escapeHtml(s.outlet)}, ${fmtDate(s.date)}` : `№${v.sourceId}`}</span></span>
+        <span class="flip__face flip__front"><span class="flip__num" data-path="masha.${k}.value">${escapeHtml(v.value)}</span><span class="flip__label" data-ui="voices.labels.${k}">${escapeHtml(LABELS[k])}</span><span class="flip__more" aria-hidden="true" data-ui="voices.flipMore">${escapeHtml(t('voices.flipMore'))}</span></span>
+        <span class="flip__face flip__back">${v.note ? `<b data-path="masha.${k}.note">${escapeHtml(v.note[0].toUpperCase() + v.note.slice(1))}</b>` : ''}<span>${escapeHtml(t('voices.flipSource'))} ${s ? `${escapeHtml(s.outlet)}, ${fmtDate(s.date)}` : `№${v.sourceId}`}</span></span>
       </span></button>${fnRefs(v.sourceId)}</div>`;
   }).join('')}</div>`);
 

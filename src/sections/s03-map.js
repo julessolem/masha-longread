@@ -3,11 +3,13 @@
 import { renderMarkdown, DATA } from '../content/render.js';
 import { nodesFrom, prose, h, fnRefs, usd } from '../ui/util.js';
 import { whenNear, refreshSoon, onEnter } from '../ui/motion.js';
+import { t, u } from '../content/ui.js';
 
+// Вкладки карты: ключ массива в data.json и ключи подписей в ui.json
 export const PERIODS = [
-  { key: 'markets2024', tab: '2024', title: '2024, весь год' },
-  { key: 'markets2026_9m', tab: 'янв–сен 2026', title: 'январь–сентябрь 2026' },
-];
+  { key: 'markets2024', tabKey: 'map.tab2024', titleKey: 'map.title2024' },
+  { key: 'markets2026_9m', tabKey: 'map.tab2026', titleKey: 'map.title2026' },
+].map((p) => ({ ...p, get tab() { return t(p.tabKey); }, get title() { return t(p.titleKey); } }));
 
 export function render(el) {
   const nodes = nodesFrom(renderMarkdown('03-karta.md'));
@@ -18,19 +20,19 @@ export function render(el) {
 
   const fig = h(`
   <figure class="figure wide map-fig">
-    <figcaption class="figure__title">Крупнейшие зарубежные рынки российского кино, сборы в долларах</figcaption>
-    <div class="tabs" role="tablist" aria-label="Период">
-      ${PERIODS.map((p, i) => `<button type="button" class="btn" role="tab" id="map-tab-${i}" aria-selected="${i === 0}" aria-controls="map-panel" tabindex="${i === 0 ? 0 : -1}" data-k="${p.key}">${p.tab}</button>`).join('')}
+    <figcaption class="figure__title">${u('map.title')}</figcaption>
+    <div class="tabs" role="tablist" aria-label="${t('map.tabsAria')}">
+      ${PERIODS.map((p, i) => `<button type="button" class="btn" role="tab" id="map-tab-${i}" aria-selected="${i === 0}" aria-controls="map-panel" tabindex="${i === 0 ? 0 : -1}" data-k="${p.key}" data-ui="${p.tabKey}">${p.tab}</button>`).join('')}
     </div>
     <div id="map-panel" role="tabpanel" aria-labelledby="map-tab-0">
       <div class="map" data-chart="map"></div>
       <ol class="map__list" aria-live="polite"></ol>
     </div>
     <aside class="latam" aria-label="Латинская Америка">
-      <span class="latam__big">${share.includes('⅓') ? '≈⅓' : share.trim()}</span>
-      <p><b>Латинская Америка</b> — ${usd(latam.value)} за январь–сентябрь 2026${rest.length ? `, ${rest.join(',').trim()}` : ''}${fnRefs(latam.sourceId)}</p>
+      <span class="latam__big" data-path="latamShare2026_9m.note">${share.includes('⅓') ? '≈⅓' : share.trim()}</span>
+      <p><b>${u('map.latamName')}</b> — <span data-path="latamShare2026_9m.value">${t('map.latamText', { sum: usd(latam.value) })}</span>${rest.length ? `, ${rest.join(',').trim()}` : ''}${fnRefs(latam.sourceId)}</p>
     </aside>
-    <p class="figure__note">Периоды не сопоставимы: 2024 — полный год, 2026 — девять месяцев. Пунктир — условный маршрут из Москвы, а не реальные поставки. Границы — Natural Earth 1:110 млн. <span class="map-src"></span></p>
+    <p class="figure__note">${u('map.note')} <span class="map-src"></span></p>
   </figure>`);
 
   const inner = document.createElement('div');
@@ -43,7 +45,7 @@ export function render(el) {
   const src = fig.querySelector('.map-src');
   const fill = (key) => {
     const rows = [...DATA[key]].sort((a, b) => b.value - a.value);
-    list.innerHTML = rows.map((c) => `<li><i data-iso="${c.iso}"></i><span>${c.country}</span><b>${usd(c.value)}</b></li>`).join('');
+    list.innerHTML = rows.map((c) => `<li><i data-iso="${c.iso}"></i><span data-path="${key}.${DATA[key].indexOf(c)}.country">${c.country}</span><b data-path="${key}.${DATA[key].indexOf(c)}.value">${usd(c.value)}</b></li>`).join('');
     src.innerHTML = `Источники: ${fnRefs(rows.map((r) => r.sourceId))}`;
   };
   fill(PERIODS[0].key);

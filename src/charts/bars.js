@@ -1,4 +1,4 @@
-// Топ-5: горизонтальные столбцы, анимация выделена цветом, переключатель «только анимация»
+﻿// Топ-5: горизонтальные столбцы, анимация выделена цветом, переключатель «только анимация»
 import { select } from 'd3-selection';
 import { scaleLinear } from 'd3-scale';
 import { max } from 'd3-array';
@@ -12,8 +12,8 @@ export function barsChart(el, data, toggle) {
   const x = scaleLinear().domain([0, max(data, (d) => d.value)]).range([0, W - 110]);
   const svg = select(el).append('svg').attr('viewBox', `0 0 ${W} ${H}`).attr('aria-hidden', 'true');
   const rows = svg.selectAll('g').data(data).join('g').attr('class', 'bar-row');
-  rows.append('text').attr('y', 20).attr('font-size', 19).attr('font-weight', 600).text((d) => d.title);
-  rows.append('rect').attr('class', 'bar').attr('y', 30).attr('height', 24).attr('rx', 4).attr('width', (d) => x(d.value))
+  rows.append('text').attr('y', 20).attr('font-size', 19).attr('font-weight', 600).attr('data-path', (d, i) => `top5Abroad2024.${i}.title`).text((d) => d.title);
+  rows.append('rect').attr('class', 'bar').attr('data-path', (d, i) => `top5Abroad2024.${i}.value`).attr('y', 30).attr('height', 24).attr('rx', 4).attr('width', (d) => x(d.value))
     .attr('fill', (d) => (d.animation ? css('--c-anim') : css('--c-other')));
   rows.append('text').attr('x', (d) => x(d.value) + 10).attr('y', 49).attr('font-size', 19).attr('font-weight', 800)
     .attr('fill', (d) => (d.animation ? css('--c-anim-text') : css('--c-ink'))).text((d) => `$${num(d.value)} млн`);

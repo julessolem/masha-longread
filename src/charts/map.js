@@ -1,4 +1,4 @@
-// Карта мира: страны плавно перекрашиваются по объёму сборов, из Москвы рисуются пунктирные маршруты.
+﻿// Карта мира: страны плавно перекрашиваются по объёму сборов, из Москвы рисуются пунктирные маршруты.
 import { select } from 'd3-selection';
 import { geoNaturalEarth1, geoPath, geoCentroid } from 'd3-geo';
 import { scaleLinear } from 'd3-scale';
@@ -8,6 +8,7 @@ import atlasUrl from 'world-atlas/countries-110m.json?url';
 import { DATA } from '../content/render.js';
 import { gsap, REDUCED } from '../ui/motion.js';
 import { usd } from '../ui/util.js';
+import { t } from '../content/ui.js';
 import { PERIODS } from '../sections/s03-map.js';
 
 // ISO 3166-1: буквенный код (как в data.json) → числовой (как в world-atlas).
@@ -30,7 +31,7 @@ export async function worldMap(el, fig) {
   const defs = svg.append('defs');
   const mo = projection(MOSCOW);
   svg.append('circle').attr('class', 'moscow').attr('cx', mo[0]).attr('cy', mo[1]).attr('r', 6);
-  svg.append('text').attr('class', 'moscow-label').attr('x', mo[0] + 9).attr('y', mo[1] - 7).text('Москва');
+  svg.append('text').attr('class', 'moscow-label').attr('x', mo[0] + 9).attr('y', mo[1] - 7).attr('data-ui', 'map.moscow').text(t('map.moscow'));
 
   const tip = document.createElement('div');
   tip.className = 'map__tip'; tip.hidden = true; tip.setAttribute('role', 'status');
@@ -64,7 +65,8 @@ export async function worldMap(el, fig) {
     const color = scaleLinear().domain([0, vmax]).range(['#F4CFA8', '#8A3A08']).interpolate(interpolateLab);
     hideTip();
 
-    cs.classed('is-data', (d) => rows.has(d.id))
+    cs.attr('data-path', (d) => (rows.has(d.id) ? `${key}.${list.indexOf(rows.get(d.id))}.value` : null))
+      .classed('is-data', (d) => rows.has(d.id))
       .attr('tabindex', (d) => (rows.has(d.id) ? 0 : null))
       .attr('role', (d) => (rows.has(d.id) ? 'button' : null))
       .attr('aria-label', (d) => (rows.has(d.id) ? `${rows.get(d.id).country}: ${usd(rows.get(d.id).value)}, ${period.title}` : null))
