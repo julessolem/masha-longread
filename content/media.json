@@ -1,0 +1,9 @@
+{
+  "_comment": "Видео для блока «Сравнение озвучек». Положите файл в public/media/, поставьте ready: true и впишите источник.",
+  "dub": [
+    { "lang": "RU", "label": "Русский", "file": "media/masha-ru.mp4", "poster": "", "source": "TODO", "ready": false },
+    { "lang": "EN", "label": "English", "file": "media/masha-en.mp4", "poster": "", "source": "TODO", "ready": false },
+    { "lang": "ES", "label": "Español", "file": "media/masha-es.mp4", "poster": "", "source": "TODO", "ready": false },
+    { "lang": "AR", "label": "العربية", "file": "media/masha-ar.mp4", "poster": "", "source": "TODO", "ready": false }
+  ]
+}

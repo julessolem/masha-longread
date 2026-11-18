@@ -1,0 +1,16 @@
+[
+  { "id": 1, "title": "«Кино не для кассового зрителя»", "outlet": "Коммерсантъ", "date": "2025-01-29", "url": "https://www.kommersant.ru/doc/7460921" },
+  { "id": 2, "title": "Сборы российского кино за рубежом упали втрое за 5 лет", "outlet": "The Moscow Times", "date": "2025-01-29", "url": "https://ru.themoscowtimes.com/2025/01/29/sbori-rossiiskogo-kino-zarubezhom-upali-vtroe-za5-let-a153652" },
+  { "id": 3, "title": "Сборы российского кино за рубежом сократились на 46%", "outlet": "Sostav.ru (по данным «Коммерсанта» и «БК Медиа»)", "date": "2026-10-27", "url": "https://www.sostav.ru/publication/sbory-rossijskogo-kino-za-rubezhom-sokratilis-na-46-88053.html" },
+  { "id": 4, "title": "Мультфильмам проще: какие страны и за сколько покупают российское кино в 2025 году", "outlet": "Inc. Russia", "date": "2025-08-27", "url": "https://incrussia.ru/share/kak-i-v-kakie-strany-prodaetsya-rossijskoe-kino/" },
+  { "id": 5, "title": "Экспорт российского кино за девять месяцев 2024 года", "outlet": "Коммерсантъ", "date": "2024-11-08", "url": "https://www.kommersant.ru/doc/7284415" },
+  { "id": 6, "title": "«Маша, Netflix и Медведь»", "outlet": "Коммерсантъ", "date": "2026-06-21", "url": "https://www.kommersant.ru/doc/8761448" },
+  { "id": 7, "title": "Netflix купил новые сезоны «Маши и Медведя»", "outlet": "AdIndex", "date": "2026-06-16", "url": "https://adindex.ru/news/right/2026/06/16/345942.phtml" },
+  { "id": 8, "title": "«Маша и Медведь»: Как российский сериал за 10 лет покорил мир", "outlet": "Кинопоиск", "date": "2017-02-08", "url": "https://www.kinopoisk.ru/article/2894052/" },
+  { "id": 9, "title": "Доклад о российской анимации (март 2025)", "outlet": "Размещён на сайте Ассоциации анимационного кино", "date": "2025-03", "url": "https://aakr.ru/wp-content/uploads/2026/01/250319_animatsiya.pdf" },
+  { "id": 10, "title": "The Unbearable Triviality of Cancelling a Russian Cartoon (колонка)", "outlet": "The Moscow Times", "date": "2026-07-10", "url": "https://www.themoscowtimes.com/2026/08/06/the-unbearable-triviality-of-canceling-a-russian-cartoon" },
+  { "id": 11, "title": "Russian cartoon labeled propaganda in UK", "outlet": "Belsat", "date": "2018-11", "url": "https://belsat.eu/en/news/russian-cartoon-labeled-propaganda-in-uk" },
+  { "id": 12, "title": "‘Snow Queen’ Becomes The First Russian Animated Feature Released in China", "outlet": "Cartoon Brew", "date": "2015-07-31", "url": "https://www.cartoonbrew.com/feature-film/snow-queen-becomes-the-first-russian-animated-feature-released-in-china-116996.html" },
+  { "id": 13, "title": "Russian animation expands production but remains dependent on state support", "outlet": "Ассоциация анимационного кино", "date": "2026-05-27", "url": "https://aakr.ru/en/russian-animation-expands-production-but-remains-dependent-on-state-support/" },
+  { "id": 14, "title": "Московские анимационные компании приумножили выручку", "outlet": "ComNews", "date": "2026-07-17", "url": "https://www.comnews.ru/content/246447/2026-07-17/2026-w29/1007/moskovskie-animacionnye-kompanii-priumnozhili-vyruchku" }
+]
