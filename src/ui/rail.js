@@ -8,7 +8,7 @@ export function initRail() {
     <div class="rail__now" aria-hidden="true"><span id="rail-name">Посадка</span><span><span id="rail-num">0</span>/${STOPS.length - 1}</span></div>
     <ol class="rail__list">
       <li aria-hidden="true" class="rail__track"><div class="rail__fill"></div></li>
-      ${STOPS.map((s) => `<li><a href="#${s.id}" data-stop="${s.n}"><span class="rail__label">${s.n ? `${s.n}. ` : ''}${s.name}</span></a></li>`).join('')}
+      ${STOPS.map((s) => `<li><a href="#${s.id}" data-stop="${s.n}" aria-label="${s.n ? `Остановка ${s.n}: ` : ''}${s.name}"><span class="rail__label" aria-hidden="true">${s.n ? `${s.n}. ` : ''}${s.name}</span></a></li>`).join('')}
     </ol>`;
   const links = [...rail.querySelectorAll('a')];
   const fill = rail.querySelector('.rail__fill');

@@ -4,10 +4,11 @@
 // Запуск: npm run check
 import { readdirSync, readFileSync, statSync, existsSync } from 'node:fs';
 import { join, extname, relative } from 'node:path';
-import { execSync } from 'node:child_process';
+import { execFileSync } from 'node:child_process';
 import { userInfo } from 'node:os';
 
-const sh = (c) => { try { return execSync(c, { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim(); } catch { return ''; } };
+// git вызывается напрямую, без командной оболочки (иначе в Windows символы < > в формате ломают команду)
+const sh = (c) => { try { const [cmd, ...args] = c.split(' '); return execFileSync(cmd, args, { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim(); } catch { return ''; } };
 const terms = [];
 const add = (label, v) => { v = (v || '').trim(); if (v.length >= 3) terms.push({ label, re: new RegExp(v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i') }); };
 add('имя пользователя ОС', userInfo().username);
@@ -74,7 +75,7 @@ const notes = [];
 const ln = sh('git config --local user.name'); const lm = sh('git config --local user.email');
 if (ln !== 'media-project') findings.push('git: локальный user.name не нейтральный');
 if (lm !== 'media-project@users.noreply.github.com') findings.push('git: локальный user.email не нейтральный');
-const authors = new Set(sh('git log --format=%an%x20<%ae>%n%cn%x20<%ce>').split('\n').filter(Boolean));
+const authors = new Set(sh('git log --format=%an%x20<%ae>%n%cn%x20<%ce>').split(/\r?\n/).filter(Boolean));
 authors.forEach((a) => { if (a !== 'media-project <media-project@users.noreply.github.com>') findings.push('git: в истории есть автор/коммиттер с другими данными'); });
 notes.push(`git: локально ${ln || '—'} / ${lm || '—'}; коммитов: ${sh('git rev-list --count HEAD') || 0}; авторов в истории: ${authors.size}`);
 notes.push(`сборка dist/: ${existsSync('dist') ? 'проверена' : 'нет (запустите npm run build, затем проверку ещё раз)'}`);

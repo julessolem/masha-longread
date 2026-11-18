@@ -80,6 +80,9 @@ if (LH) {
   const port = Number(new URL(browser.wsEndpoint()).port);
   const lh = await lighthouse(URL_, { port, output: 'html', logLevel: 'error', onlyCategories: ['performance', 'accessibility', 'best-practices', 'seo'] });
   writeFileSync(`${OUT}/lighthouse.html`, lh.report);
+  writeFileSync(`${OUT}/lighthouse.json`, JSON.stringify(lh.lhr));
+  report.a11yDetails = Object.values(lh.lhr.audits).filter((a) => a.score === 0 && a.details?.items?.length).slice(0, 8)
+    .map((a) => `${a.id}: ${a.details.items.slice(0, 3).map((i) => i.node?.snippet || i.url || '').join(' | ')}`);
   report.lighthouse = Object.fromEntries(Object.entries(lh.lhr.categories).map(([k, v]) => [k, Math.round(v.score * 100)]));
   report.lighthouseMetrics = Object.fromEntries(['first-contentful-paint', 'largest-contentful-paint', 'total-blocking-time', 'cumulative-layout-shift', 'speed-index'].map((k) => [k, lh.lhr.audits[k].displayValue]));
   report.lighthouseIssues = Object.values(lh.lhr.audits).filter((a) => a.score !== null && a.score < 0.9 && !['informative', 'notApplicable', 'manual'].includes(a.scoreDisplayMode)).map((a) => `${a.id}: ${a.title}`);

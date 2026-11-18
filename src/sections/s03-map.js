@@ -23,7 +23,7 @@ export function render(el) {
       ${PERIODS.map((p, i) => `<button type="button" class="btn" role="tab" id="map-tab-${i}" aria-selected="${i === 0}" aria-controls="map-panel" tabindex="${i === 0 ? 0 : -1}" data-k="${p.key}">${p.tab}</button>`).join('')}
     </div>
     <div id="map-panel" role="tabpanel" aria-labelledby="map-tab-0">
-      <div class="map" data-chart="map" aria-label="Карта мира с выделенными странами-рынками"></div>
+      <div class="map" data-chart="map"></div>
       <ol class="map__list" aria-live="polite"></ol>
     </div>
     <aside class="latam" aria-label="Латинская Америка">

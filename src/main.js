@@ -30,45 +30,59 @@ import * as s09 from './sections/s09-sources.js';
 
 const MODULES = [s00, s01, s02, s03, s04, s05, s06, s07, s08, s09];
 
-// 1. Разметка всех остановок (текст из content/*.md)
-const states = STOPS.map((s, i) => {
+const states = [];
+
+/** Разметка одной остановки (текст из content/*.md) */
+function renderStop(i) {
+  const s = STOPS[i];
   const el = document.getElementById(s.id);
   el.dataset.name = s.name;
   const mod = MODULES[i];
-  if (mod?.render) return mod.render(el);
-  const nodes = nodesFrom(renderMarkdown(s.file));
-  el.append(prose(nodes));
-  return {};
-});
-
-// «Остановка N.» в начале заголовка — оформляется как штамп (текст не меняется)
-STOPS.forEach((s) => {
-  if (s.n < 1 || s.n > 8) return;
-  const h2 = document.querySelector(`#${s.id} .prose h2`);
-  if (!h2) return;
-  h2.id = `${s.id}-h`;
-  document.getElementById(s.id).setAttribute('aria-labelledby', h2.id);
-  const first = h2.firstChild;
-  const m = first?.nodeType === Node.TEXT_NODE && first.textContent.match(/^(Остановка\s+\d+\.)\s*/);
-  if (m) {
-    first.textContent = first.textContent.slice(m[0].length);
-    h2.insertAdjacentHTML('afterbegin', `<span class="h2__kicker">${m[1].replace(/\s+/g, ' ')}</span> `);
+  if (mod?.render) states[i] = mod.render(el);
+  else { el.append(prose(nodesFrom(renderMarkdown(s.file)))); states[i] = {}; }
+  // «Остановка N.» в начале заголовка — оформляется как штамп (текст не меняется)
+  const h2 = el.querySelector('.prose h2');
+  if (h2 && s.n >= 1 && s.n <= 8) {
+    h2.id = `${s.id}-h`;
+    el.setAttribute('aria-labelledby', h2.id);
+    const first = h2.firstChild;
+    const m = first?.nodeType === Node.TEXT_NODE && first.textContent.match(/^(Остановка\s+\d+\.)\s*/);
+    if (m) {
+      first.textContent = first.textContent.slice(m[0].length);
+      h2.insertAdjacentHTML('afterbegin', `<span class="h2__kicker">${m[1].replace(/\s+/g, ' ')}</span> `);
+    }
   }
-});
-
-// 2. Движение и интерактив
-initScroll();
-initBg();
-initRail();
-initFootnotes();
-initReveal();
-initTransitions();
-STOPS.forEach((s, i) => MODULES[i]?.animate?.(document.getElementById(s.id), states[i]));
-
-document.fonts?.ready.then(refreshSoon);
-window.addEventListener('load', () => ScrollTrigger.refresh());
-
-// 3. Режим редактирования — только в dev (в production-сборку не попадает)
-if (import.meta.env.DEV && new URLSearchParams(location.search).get('edit') === '1') {
-  import('./edit/edit-mode.js').then((m) => m.initEditMode());
+  // Переход перед этой остановкой
+  const prev = el.previousElementSibling;
+  if (prev?.classList.contains('transit')) prev.dataset.ready = '1';
 }
+
+// 1. Сразу — обложка и первая остановка: первые перестройки вёрстки (и подмена шрифтов) дешёвые,
+// пока страница короткая. Остальные остановки достраиваются порциями в простоях браузера.
+renderStop(0);
+renderStop(1);
+initScroll();
+initFootnotes();
+MODULES[0].animate(document.getElementById(STOPS[0].id), states[0]);
+
+const tasks = [
+  ...STOPS.slice(2).map((s, k) => () => renderStop(k + 2)),
+  initBg, initRail, initReveal, initTransitions,
+  ...STOPS.slice(1).map((s, k) => () => MODULES[k + 1]?.animate?.(document.getElementById(s.id), states[k + 1])),
+];
+const idle = window.requestIdleCallback || ((fn) => setTimeout(() => fn({ timeRemaining: () => 6 }), 16));
+(function pump() {
+  idle((deadline) => {
+    do tasks.shift()(); while (tasks.length && deadline.timeRemaining() > 8);
+    if (tasks.length) { pump(); return; }
+    ScrollTrigger.refresh();
+    document.fonts?.ready.then(refreshSoon);
+    // Переход по якорю (#s3 и т. п.), если страницу открыли по ссылке на раздел
+    if (location.hash && /^#s\d$/.test(location.hash)) document.querySelector(location.hash)?.scrollIntoView();
+    // 3. Режим редактирования — только в dev (в production-сборку не попадает)
+    if (import.meta.env.DEV && new URLSearchParams(location.search).get('edit') === '1') {
+      import('./edit/edit-mode.js').then((m) => m.initEditMode());
+    }
+  }, { timeout: 500 });
+}());
+window.addEventListener('load', refreshSoon);

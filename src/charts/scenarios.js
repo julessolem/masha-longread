@@ -53,7 +53,7 @@ export function scenarioChart(el, list, initial) {
   const place = (v) => {
     path.attr('d', gen(pts(v)));
     endDot.attr('cx', x(2030)).attr('cy', y(v));
-    endLbl.attr('x', x(2030) - 12).attr('y', y(v) + (v > target - 4 && v < target + 4 ? 26 : -14)).text(`2030: $${num(v)} млн`);
+    endLbl.attr('x', x(2030) - 12).attr('y', y(v) - 14).text(`2030: $${num(v)} млн`);
   };
   place(cur);
   if (!REDUCED) {

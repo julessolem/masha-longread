@@ -20,6 +20,7 @@ export function render(el) {
 
   // Выноска: предложение с цитатой Бырдина из текста раздела (дублирует абзац, поэтому скрыта от читалок)
   const quote = h(`<aside class="typed" aria-hidden="true"><p class="typed__text">${findSentence('05-lokalizatsiya.md', 'Бырдин')}</p></aside>`);
+  quote.querySelectorAll('a').forEach((a) => a.setAttribute('tabindex', '-1'));
 
   const dub = h(`
   <figure class="dub">
@@ -82,6 +83,11 @@ export function animate(el, { quote, dub, flips }) {
       if (d) { e.preventDefault(); select(tabs[(i + d + tabs.length) % tabs.length], true); }
     });
   });
+
+  // «Звуковая волна» в пустом слоте анимируется только на экране
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(([e]) => dub.classList.toggle('is-on', e.isIntersecting)).observe(dub);
+  }
 
   // Флипы
   flips.querySelectorAll('.flip').forEach((b) => b.addEventListener('click', () => b.setAttribute('aria-pressed', String(b.getAttribute('aria-pressed') !== 'true'))));
